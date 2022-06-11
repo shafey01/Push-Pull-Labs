@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bootstrap demo</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+
+    <div class="container">
+      <h1>Welcome My Chat</h1>
+
+    <pre id="messages" style="height: 400px; overflow: scroll" class="message"></pre>
+
+    
+    <input
+      type="text"
+      id="messageBox"
+      placeholder="Type your message here"
+      style="display: block; width: 100%; height: 100px; margin-bottom: 10px; padding: 10px"
+    />
+   
+    <button id="send" title="Send Message!" type="button" class="btn btn-primary">Send</button>
+    </div>
+
+
+    <script>
+      (function () {
+        const sendBtn = document.querySelector("#send");
+        const messages = document.querySelector("#messages");
+        const messageBox = document.querySelector("#messageBox");
+
+        let ws;
+
+        function showMessage(message) {
+          messages.textContent += `\n\n${message}`;
+          messages.scrollTop = messages.scrollHeight;
+          messageBox.value = "";
+        }
+
+        function init() {
+          if (ws) {
+            ws.onerror = ws.onopen = ws.onclose = null;
+            ws.close();
+          }
+
+          ws = new WebSocket("ws://localhost:4000");
+          ws.onopen = () => {
+            console.log("Connection opened!");
+          };
+          ws.onmessage = ({ data }) => showMessage(data);
+          ws.onclose = function () {
+            ws = null;
+          };
+        }
+
+        sendBtn.onclick = function () {
+          if (!ws) {
+            showMessage("No WebSocket connection :(");
+            return;
+          }
+
+          ws.send(messageBox.value);
+          showMessage(messageBox.value);
+        };
+
+        init();
+      })();
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

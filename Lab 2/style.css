@@ -1,0 +1,12 @@
+.message {
+
+    background-color: antiquewhite;
+    color:blueviolet;
+    font-size: larger;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.container{
+    text-align: center;
+    font-weight: bolder;
+}
